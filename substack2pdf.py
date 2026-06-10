@@ -359,10 +359,15 @@ section.footnotes h2 { font-size: 12pt; margin: 0 0 0.7em 0; }
 .footnote-item .fn-num { min-width: 1.8em; font-weight: 700; color: #1a5276; }
 .footnote-item .fn-body p { margin: 0 0 0.3em 0; }
 .footnote-item .fn-body a { color: #1a5276; text-decoration: none; }
+
+p.source-url { margin-top: 2.2em; padding-top: 0.9em; border-top: 1px solid #ddd;
+               font-size: 9pt; color: #888; word-break: break-all; }
+p.source-url .label { color: #666; font-weight: 600; }
+p.source-url a { color: #1a5276; text-decoration: none; }
 """
 
 
-def build_html(meta: dict, body: Tag, notes: list[dict]) -> str:
+def build_html(meta: dict, body: Tag, notes: list[dict], source_url: str = "") -> str:
     byline_bits = []
     if meta["author"]:
         byline_bits.append(html_mod.escape(meta["author"]))
@@ -384,6 +389,14 @@ def build_html(meta: dict, body: Tag, notes: list[dict]) -> str:
 
     subtitle = f'<p class="subtitle">{html_mod.escape(meta["subtitle"])}</p>' if meta["subtitle"] else ""
 
+    source_html = ""
+    if source_url:
+        esc = html_mod.escape(source_url)
+        source_html = (
+            f'<p class="source-url"><span class="label">Source:</span> '
+            f'<a href="{esc}">{esc}</a></p>'
+        )
+
     return f"""<!DOCTYPE html>
 <html><head><meta charset="utf-8"><style>{CSS}</style></head>
 <body>
@@ -396,6 +409,7 @@ def build_html(meta: dict, body: Tag, notes: list[dict]) -> str:
 {body.decode_contents()}
 </div>
 {notes_html}
+{source_html}
 </body></html>"""
 
 
@@ -412,6 +426,8 @@ def main():
     ap.add_argument("-o", "--output",
                     help="Output PDF path (default: output/<title-slug>.pdf)")
     ap.add_argument("--cookies", help="Path to a Netscape-format cookies.txt (for paywalled posts)")
+    ap.add_argument("--source-url", action=argparse.BooleanOptionalAction, default=True,
+                    help="Append the article's source URL to the end of the PDF (default: enabled)")
     args = ap.parse_args()
 
     session = make_session(args.cookies)
@@ -437,7 +453,16 @@ def main():
         n_images = embed_images(body, base_url, session, tmpdir)
         print(f"→ embedded {n_images} image(s), {len(notes)} footnote(s)")
 
-        final_html = build_html(meta, body, notes)
+        # The URL to credit: the source itself if given as a URL, otherwise the
+        # canonical URL recovered from a saved HTML file (skip the bare fallback).
+        display_url = ""
+        if args.source_url:
+            if re.match(r"^https?://", args.source):
+                display_url = args.source
+            elif base_url and base_url != "https://substack.com/":
+                display_url = base_url
+
+        final_html = build_html(meta, body, notes, source_url=display_url)
 
         if args.output:
             out = args.output

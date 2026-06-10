@@ -102,6 +102,7 @@ python substack2pdf.py saved_page.html
 | `source` | Article URL, or path to an HTML file saved from your browser. |
 | `-o`, `--output` | Output PDF path (default: `output/<title-slug>.pdf`). |
 | `--cookies` | Path to a Netscape-format `cookies.txt`, for paywalled posts. |
+| `--source-url` / `--no-source-url` | Append the article's source URL to the end of the PDF (default: enabled). |
 
 ---
 
