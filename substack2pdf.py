@@ -296,6 +296,21 @@ def clean_body(body: Tag) -> None:
     for p in body.find_all("p"):
         if not p.get_text(strip=True) and not p.find("img"):
             p.decompose()
+    # Substack appends decorative <hr> dividers just before the subscribe/CTA
+    # widgets stripped above; once those widgets are gone the dividers are left
+    # dangling at the end and render as stray "• • •" rules. Remove any trailing
+    # dividers and empty wrappers (in-text dividers are kept — content follows).
+    def _is_trailing_cruft(el: Tag) -> bool:
+        if el.name == "hr":
+            return True
+        return not el.get_text(strip=True) and not el.find("img")
+
+    while True:
+        kids = [c for c in body.children if isinstance(c, Tag)]
+        if kids and _is_trailing_cruft(kids[-1]):
+            kids[-1].decompose()
+        else:
+            break
 
 
 # ---------------------------------------------------------------- rendering
@@ -440,7 +455,11 @@ def main():
     print(f"→ found: “{meta['title']}” by {meta['author'] or 'unknown'} ({meta['date'] or 'no date'})")
 
     body = find_body(soup)
-    if soup.select_one(".paywall, .paywall-jump, [data-component-name='Paywall']"):
+    # The genuine paywall gate Substack appends after a preview matches
+    # `.paywall` / the Paywall component. `.paywall-jump` is just an in-content
+    # anchor present even for subscribers, so it must NOT count — including it
+    # produces a false "paywalled" warning on fully-captured paid posts.
+    if soup.select_one(".paywall, [data-component-name='Paywall']"):
         print("⚠  this post appears paywalled — only the free preview was captured.")
         print("   To get the full article: open it in your logged-in browser, save the")
         print("   page (Cmd+S → 'Webpage, Complete' or single HTML), and run this tool")
