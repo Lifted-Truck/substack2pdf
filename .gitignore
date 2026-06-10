@@ -1,0 +1,18 @@
+# Never commit cookies — they are credentials
+cookies.txt
+*.cookies
+cookies*.txt
+
+# Generated PDFs (this is a PDF generator — don't commit its output)
+*.pdf
+output/
+
+# Saved HTML pages used as input
+*.html
+
+# Python / OS cruft
+__pycache__/
+*.pyc
+.venv/
+venv/
+.DS_Store
