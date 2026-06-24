@@ -114,6 +114,38 @@ python substack2pdf.py saved_page.html
 - Layout is tuned for typical Substack posts; unusual custom HTML may need CSS
   tweaks in the `CSS` string near the top of `substack2pdf.py`.
 
+---
+
+## Where this is headed
+
+Today this is a single script. The plan is to grow it into a small **core
+library** (`fetch → extract → clean → render`) with thin interfaces wrapped
+around it — so the same engine powers the CLI, a batch runner, an MCP server,
+and a GUI, and so new publications are added as pluggable *adapters* rather than
+one-off scripts.
+
+![Target architecture](docs/architecture.png)
+
+### Roadmap
+
+The phases below are independently shippable, and each one is built test-first
+against saved HTML fixtures (free, paywalled, footnote-heavy, image-heavy) so new
+adapters can be added gradually without regressing the ones that already work.
+
+| Phase | Focus | Notes |
+| --- | --- | --- |
+| 0 | **Package + core split** | `pyproject.toml`, `pipx` entry point, split into modules, fixture-based test harness. |
+| 1 | **Built-in batch** | Multiple URLs / a publication root / a URL file; archive enumeration; pacing, backoff, `--skip-existing`, and a resume manifest. |
+| 2 | **Formatting levers** | CSS factored into a theme (page size, margins, fonts, dividers, footnotes) driven by config file + CLI flags. |
+| 3 | **Adapter abstraction** | Domain → adapter registry; Substack as the first formal adapter. |
+| 4 | **MCP server** | Core exposed as MCP tools (`convert_url`, `list_publication`, `convert_batch`) with a job model for long-running batches. |
+| 5 | **More platforms** | Ghost / WordPress adapters (RSS + content API) and a generic readability fallback for arbitrary blogs. |
+| 6 | **Simple GUI** | Local web app: paste URL(s) or pick a publication, toggle common formatting options, watch progress, download PDFs. |
+| 7 | **Formatting studio** | Advanced GUI with live preview, a full theme editor, and saved/shareable formatting presets. |
+
+Current status: Substack support is solid (validated against 100+ real
+articles, free and paid). Everything from Phase 0 onward is in planning.
+
 ## License
 
 MIT

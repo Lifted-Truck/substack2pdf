@@ -1,0 +1,96 @@
+<svg width="680" height="520" viewBox="0 0 680 520" xmlns="http://www.w3.org/2000/svg" role="img">
+  <title>Target architecture for substack2pdf</title>
+  <desc>Two thin interfaces (CLI and MCP server) feed a batch engine that drives a shared core library. The core uses a pluggable adapter registry and a theme/config layer. The adapter registry supports Substack today, Ghost and WordPress next, and a generic reader as fallback.</desc>
+  <style>
+    .bg    { fill: #ffffff; }
+    .title { font: 600 15px Helvetica, Arial, sans-serif; fill: #1f2937; }
+    .th    { font: 600 15px Helvetica, Arial, sans-serif; }
+    .ts    { font: 400 12px Helvetica, Arial, sans-serif; }
+    .blue  rect { fill: #eef2ff; stroke: #4f46e5; }
+    .blue  .th  { fill: #3730a3; }
+    .blue  .ts  { fill: #5b54d6; }
+    .teal  rect { fill: #ecfdf5; stroke: #0d9488; }
+    .teal  .th  { fill: #115e59; }
+    .teal  .ts  { fill: #0f766e; }
+    .amber rect { fill: #fffbeb; stroke: #d97706; }
+    .amber .th  { fill: #92400e; }
+    .amber .ts  { fill: #b45309; }
+    rect.node { stroke-width: 1.5; }
+    .edge  { stroke: #94a3b8; stroke-width: 1.5; fill: none; }
+  </style>
+
+  <rect class="bg" x="0" y="0" width="680" height="520" rx="10"/>
+  <text class="title" x="40" y="32">target architecture — thin interfaces over a shared core</text>
+
+  <!-- connectors -->
+  <g class="edge" marker-end="url(#ah)">
+    <path d="M250,106 L302,150"/>
+    <path d="M430,106 L378,150"/>
+    <path d="M340,198 L340,246"/>
+    <path d="M340,306 L252,350"/>
+    <path d="M340,306 L444,350"/>
+    <path d="M235,402 L162,446"/>
+    <path d="M235,402 L335,446"/>
+    <path d="M235,402 L520,446"/>
+  </g>
+  <defs>
+    <marker id="ah" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <!-- interfaces -->
+  <g class="blue">
+    <rect class="node" x="180" y="60" width="140" height="46" rx="4"/>
+    <text class="th" x="250" y="82" text-anchor="middle">CLI</text>
+    <text class="ts" x="250" y="98" text-anchor="middle">thin wrapper</text>
+  </g>
+  <g class="blue">
+    <rect class="node" x="360" y="60" width="140" height="46" rx="4"/>
+    <text class="th" x="430" y="82" text-anchor="middle">MCP server</text>
+    <text class="ts" x="430" y="98" text-anchor="middle">thin wrapper</text>
+  </g>
+
+  <!-- batch -->
+  <g class="teal">
+    <rect class="node" x="200" y="152" width="280" height="46" rx="4"/>
+    <text class="th" x="340" y="174" text-anchor="middle">batch engine</text>
+    <text class="ts" x="340" y="190" text-anchor="middle">pacing · resume · skip-existing</text>
+  </g>
+
+  <!-- core -->
+  <g class="amber">
+    <rect class="node" x="140" y="246" width="400" height="60" rx="4"/>
+    <text class="th" x="340" y="272" text-anchor="middle">core library</text>
+    <text class="ts" x="340" y="292" text-anchor="middle">fetch · extract · clean · render</text>
+  </g>
+
+  <!-- pluggable -->
+  <g class="blue">
+    <rect class="node" x="140" y="352" width="190" height="50" rx="4"/>
+    <text class="th" x="235" y="374" text-anchor="middle">adapter registry</text>
+    <text class="ts" x="235" y="392" text-anchor="middle">per-platform extractors</text>
+  </g>
+  <g class="blue">
+    <rect class="node" x="360" y="352" width="190" height="50" rx="4"/>
+    <text class="th" x="455" y="374" text-anchor="middle">theme + config</text>
+    <text class="ts" x="455" y="392" text-anchor="middle">formatting levers</text>
+  </g>
+
+  <!-- adapters -->
+  <g class="teal">
+    <rect class="node" x="60" y="446" width="170" height="48" rx="4"/>
+    <text class="th" x="145" y="468" text-anchor="middle">substack</text>
+    <text class="ts" x="145" y="484" text-anchor="middle">shipping · 117 done</text>
+  </g>
+  <g class="blue">
+    <rect class="node" x="255" y="446" width="170" height="48" rx="4"/>
+    <text class="th" x="340" y="468" text-anchor="middle">ghost · wordpress</text>
+    <text class="ts" x="340" y="484" text-anchor="middle">next · rss + api</text>
+  </g>
+  <g class="blue">
+    <rect class="node" x="450" y="446" width="170" height="48" rx="4"/>
+    <text class="th" x="535" y="468" text-anchor="middle">generic reader</text>
+    <text class="ts" x="535" y="484" text-anchor="middle">fallback</text>
+  </g>
+</svg>
