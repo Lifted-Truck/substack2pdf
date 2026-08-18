@@ -40,3 +40,14 @@ committed or pushed. The repo is public.
 **Why.** A cookie file is a live credential; generated PDFs may contain paid
 content. Enforced by `.gitignore` and, for machine-identity paths, the
 `leak_gate`.
+
+## 4 — Declare kit 2.5.0 (2026-08-18)
+
+**Decision.** Bump `kit_version` from 2.4.1 to 2.5.0 and re-sync `.kit/`.
+
+**Why.** The kit released 2.5.0 mid-retrofit (`.gitattributes` must be TRACKED,
+not merely present). `currency.py` showed the repo already SATISFIED that
+requirement — `.gitattributes` was committed earlier — so only the declaration
+was stale. Per the kit's Step 5 rule a repo declares a version exactly when it
+meets every requirement, so the honest move was to bump rather than leave a
+true-but-understated declaration. No behaviour changed; cites Decision 1.

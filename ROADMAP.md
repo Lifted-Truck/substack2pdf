@@ -6,7 +6,7 @@ working lessons in [LIBRARY.md](LIBRARY.md).
 
 **Status (last verified 2026-08-18):** Substack support is shipping and
 validated against 120+ live articles (free and paid). The repo was retrofit to
-kit 2.4.1 on 2026-08-18 (Decision 1). Everything from Phase 1 onward is
+kit 2.5.0 on 2026-08-18 (Decisions 1, 4). Everything from Phase 1 onward is
 planning. The architecture target is diagrammed in
 [docs/architecture.png](docs/architecture.png).
 

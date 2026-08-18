@@ -1,12 +1,14 @@
-# trace 0001 — retrofit to kit 2.4.1
+# trace 0001 — retrofit to kit 2.5.0
 
 - **Date:** 2026-08-18
-- **Change:** Retrofit substack2pdf from `pre-2.0.0` to kit 2.4.1 (Decision 1).
+- **Change:** Retrofit substack2pdf from `pre-2.0.0` to kit 2.5.0 (Decisions 1, 4).
+  The kit released 2.5.0 mid-run; its one requirement (`.gitattributes` TRACKED)
+  was already satisfied, so the declaration was bumped and `.kit/` re-synced.
 - **What changed (all created unless noted):**
   - `CLAUDE.md` (charter + `## Mailbox`), `ROADMAP.md`, `DECISIONS.md`,
     `project.manifest.json`, `INDEX.md`, `LIBRARY.md`, `traces/`.
   - `verify` (project-owned, exec bit set, sources `.kit/kit-gates.sh`).
-  - `.kit/kit-gates.sh` + `.kit/MANIFEST` — vendored via `kit_sync.py` (kit 2.4.1,
+  - `.kit/kit-gates.sh` + `.kit/MANIFEST` — vendored via `kit_sync.py` (kit 2.5.0,
     byte-identical to canonical; `migrate_to_vendored.py` reported already-vendored).
   - `.github/workflows/ci.yml` — `verify fast` on ubuntu.
   - Modified: `.gitignore` (+`.harness/`; deliberately NOT ignoring

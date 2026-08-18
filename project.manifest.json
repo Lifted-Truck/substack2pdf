@@ -1,7 +1,7 @@
 {
   "schema": "project-manifest.0 (draft — kit v2 will formalize)",
   "status": "RATIFIED 2026-08-18 (retrofit, Decision 1). Phase state lives in ROADMAP.md only.",
-  "kit_version": "2.4.1",
+  "kit_version": "2.5.0",
   "survey": {
     "what_is_it": "a command-line tool that converts Substack articles into clean, formatted PDFs (metadata, full body, high-res embedded images, captions, code blocks, linked footnotes); free posts from a URL, paywalled posts via the user's own cookies or a saved HTML page. Evolving toward a core library with CLI/MCP/GUI interfaces and pluggable per-platform adapters (see README, docs/architecture.png).",
     "architecture_rung": {
