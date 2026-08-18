@@ -16,3 +16,7 @@ __pycache__/
 .venv/
 venv/
 .DS_Store
+
+# Harness: local verify state (kit). NOTE: do NOT ignore .kit-currency-plant-*
+# — ignoring it blinds the gate-fires probe (kit CHANGELOG 2.3.0).
+.harness/

@@ -10,6 +10,9 @@ and lays it all out as a readable, print-friendly PDF using a serif book style.
 Works for free/public posts directly from a URL, and for paywalled posts you
 subscribe to via either browser cookies or a saved HTML page.
 
+<sub>Status last verified 2026-08-18 · Substack support shipping (validated
+against 120+ live articles) · on kit 2.5.0 · see [ROADMAP.md](ROADMAP.md).</sub>
+
 ---
 
 ## Installation
@@ -128,9 +131,12 @@ one-off scripts.
 
 ### Roadmap
 
-The phases below are independently shippable, and each one is built test-first
-against saved HTML fixtures (free, paywalled, footnote-heavy, image-heavy) so new
-adapters can be added gradually without regressing the ones that already work.
+The table below is the public summary; **[ROADMAP.md](ROADMAP.md) is the
+canonical, phase-gated source of truth** (with acceptance criteria and the
+Prior-Art bookends). The phases are independently shippable, and each is built
+test-first against saved HTML fixtures (free, paywalled, footnote-heavy,
+image-heavy) so new adapters can be added gradually without regressing the ones
+that already work.
 
 | Phase | Focus | Notes |
 | --- | --- | --- |
@@ -143,8 +149,8 @@ adapters can be added gradually without regressing the ones that already work.
 | 6 | **Simple GUI** | Local web app: paste URL(s) or pick a publication, toggle common formatting options, watch progress, download PDFs. |
 | 7 | **Formatting studio** | Advanced GUI with live preview, a full theme editor, and saved/shareable formatting presets. |
 
-Current status: Substack support is solid (validated against 100+ real
-articles, free and paid). Everything from Phase 0 onward is in planning.
+Live phase state, acceptance criteria, and the current debt list live in
+[ROADMAP.md](ROADMAP.md) — this table is a summary and defers to it.
 
 ## License
 
