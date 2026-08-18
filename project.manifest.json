@@ -1,0 +1,44 @@
+{
+  "schema": "project-manifest.0 (draft — kit v2 will formalize)",
+  "status": "RATIFIED 2026-08-18 (retrofit, Decision 1). Phase state lives in ROADMAP.md only.",
+  "kit_version": "2.4.1",
+  "survey": {
+    "what_is_it": "a command-line tool that converts Substack articles into clean, formatted PDFs (metadata, full body, high-res embedded images, captions, code blocks, linked footnotes); free posts from a URL, paywalled posts via the user's own cookies or a saved HTML page. Evolving toward a core library with CLI/MCP/GUI interfaces and pluggable per-platform adapters (see README, docs/architecture.png).",
+    "architecture_rung": {
+      "choice": 1,
+      "menu": [
+        "1: single thread",
+        "2: thread + subagents/verifier",
+        "3: organ fleet"
+      ],
+      "earned_by": "a single deterministic pipeline, human-run. No parallelizable, independently-verifiable seams yet; rung 2 would be earned by a resident verifier over the (not-yet-built) fixture goldens. Confirmed by the human at retrofit."
+    },
+    "domain_core_llm_must_not_own": "the entire conversion pipeline — HTML fetch, DOM extraction/cleaning, best-resolution image embedding, footnote linking, paywall-truncation detection, and PDF rendering. Pure reproducible Python; no model in the path.",
+    "oracle_shape": {
+      "goldens": "planned: saved-HTML fixtures asserting body-char floor, no trailing divider, no false paywall warning, footnote/image counts (ROADMAP Phase 0). Current: py_compile smoke + kit gates.",
+      "ci": "verify fast on ubuntu (public repo — unlimited Actions minutes)"
+    },
+    "second_implementation": false,
+    "consumers_and_providers": {
+      "consumes": [
+        "the kit (vendored .kit/ gates, charter/roadmap conventions)"
+      ],
+      "consumed_by": [
+        "the human, directly (CLI)"
+      ]
+    },
+    "parallel_audit_thread": false,
+    "knowledge_loop_tags": [
+      "substack-dom-drift",
+      "extraction-fidelity",
+      "paywall-detection",
+      "pdf-rendering",
+      "macos-native-libs",
+      "adapter-design"
+    ],
+    "lifespan_autonomy": {
+      "lifespan": "long-lived personal tool, actively developed toward the library/MCP/GUI roadmap",
+      "autonomy_tier": "human-run; no unattended operation. Public repo; pushes and any public release are the human's."
+    }
+  }
+}
