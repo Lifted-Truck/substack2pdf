@@ -100,12 +100,31 @@ python substack2pdf.py saved_page.html
 
 ## Options
 
+`substack2pdf.py` (Guardian's flags are the same minus `--cookies`):
+
 | Argument | Description |
 | --- | --- |
 | `source` | Article URL, or path to an HTML file saved from your browser. |
 | `-o`, `--output` | Output PDF path (default: `output/<title-slug>.pdf`). |
 | `--cookies` | Path to a Netscape-format `cookies.txt`, for paywalled posts. |
 | `--source-url` / `--no-source-url` | Append the article's source URL to the end of the PDF (default: enabled). |
+
+---
+
+## Guardian articles (`guardian2pdf.py`)
+
+A sibling utility for [theguardian.com](https://www.theguardian.com). Guardian
+articles are free to read, so no cookies are involved:
+
+```bash
+python guardian2pdf.py https://www.theguardian.com/news/2026/aug/18/some-article
+```
+
+Same output convention (`output/<title-slug>.pdf`), same `-o` and
+`--source-url` flags, and the same serif book layout — it reuses substack2pdf's
+renderer rather than duplicating it, so only fetch/extract/clean differ. It
+pulls the headline, standfirst, byline, full body, and inline images at the
+Guardian's master resolution, and strips the closing tag list and share bar.
 
 ---
 

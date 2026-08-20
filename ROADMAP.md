@@ -52,6 +52,12 @@ dated and cited in `docs/prior-art.md`.
 
 - [ ] Domain → adapter registry; Substack as the first formal adapter. Gated on
   the Phase 0 formal prior-art pass.
+- **Partly anticipated (2026-08-18, Decision 5):** `guardian2pdf.py` landed as a
+  second converter that REUSES substack2pdf's renderer and differs only in
+  fetch/extract/clean. That is the shape the registry will formalise, arrived at
+  by reuse rather than abstraction. Two publications is not yet enough evidence
+  to fix the adapter interface — fold both into the registry here, and treat the
+  current `from substack2pdf import …` coupling as the debt this phase repays.
 
 ## Phase 4 — MCP server
 
