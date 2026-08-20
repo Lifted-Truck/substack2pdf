@@ -74,3 +74,26 @@ no prose, whose text is mostly link text), never by class name: Guardian class
 names are hashed (`dcr-…`) and change between deploys, so a class match would
 silently rot. First attempt counted `<li>` as prose and kept the very tag list it
 meant to drop — see [[LIBRARY.md]] L0003.
+
+## 6 — Output is partitioned by source (2026-08-18)
+
+**Decision.** PDFs default to `output/<platform>[/<publication>]/` —
+`output/substack/samkriss/…`, `output/guardian/…` — instead of one flat
+`output/`. `-o` still overrides with an explicit path.
+
+**Why.** A flat folder stopped scaling the moment a second source existed: 120
+posts from one newsletter sat beside unrelated articles with no way to tell them
+apart but the filename. Platform-then-publication (rather than publication alone)
+matches the shape ROADMAP Phase 3 will formalise, so the adapter registry can
+own this path later without moving anyone's files a second time.
+
+**Also decided.** The publication is derived from the URL host, not from
+`og:site_name` — the host is present and stable on every fetch, while the meta
+tag is sometimes absent or generic. `og:site_name` remains the fallback for
+saved-HTML input, where the recovered base URL may name no publication.
+
+**Migration.** The 122 existing flat PDFs were routed by reading the `Source:`
+URL each file already carries (the `--source-url` feature), so placement was
+derived per file rather than assumed — which is how the Harper's cross-post
+landed in its own folder instead of being lumped in with the newsletter it was
+downloaded alongside.

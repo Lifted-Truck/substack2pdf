@@ -34,12 +34,12 @@ from bs4 import BeautifulSoup, Tag
 
 # Shared machinery. substack2pdf is import-safe (its work happens under main()).
 from substack2pdf import (
-    OUTPUT_DIR,
     _ensure_native_libs,
     build_html,
     embed_images,
     make_session,
     slugify,
+    source_output_dir,
 )
 
 # Guardian article bodies are far cleaner than Substack's, so this list is
@@ -203,7 +203,7 @@ def _strip_trailing_chrome(body: Tag) -> None:
 def main():
     ap = argparse.ArgumentParser(description="Convert a Guardian article to a formatted PDF.")
     ap.add_argument("source", help="Article URL, or path to a saved HTML file")
-    ap.add_argument("-o", "--output", help="Output PDF path (default: output/<title-slug>.pdf)")
+    ap.add_argument("-o", "--output", help="Output PDF path (default: output/guardian/<title-slug>.pdf)")
     ap.add_argument("--source-url", action=argparse.BooleanOptionalAction, default=True,
                     help="Append the article's source URL to the end of the PDF (default: enabled)")
     args = ap.parse_args()
@@ -234,7 +234,8 @@ def main():
         # No footnotes: the Guardian doesn't use Substack-style numbered notes.
         final_html = build_html(meta, body, [], source_url=display_url)
 
-        out = args.output or os.path.join(OUTPUT_DIR, f"{slugify(meta['title'])}.pdf")
+        out = args.output or os.path.join(source_output_dir("guardian"),
+                                          f"{slugify(meta['title'])}.pdf")
         out_parent = os.path.dirname(out)
         if out_parent:
             os.makedirs(out_parent, exist_ok=True)

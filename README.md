@@ -49,7 +49,8 @@ if you hit native-library issues on Linux or Windows.
 python substack2pdf.py https://example.substack.com/p/some-post
 ```
 
-The PDF is written to `output/<title-slug>.pdf` by default.
+The PDF is written to `output/substack/<publication>/<title-slug>.pdf` by default —
+each source gets its own folder, so a mixed archive stays navigable.
 
 ### Custom output path
 
@@ -105,7 +106,7 @@ python substack2pdf.py saved_page.html
 | Argument | Description |
 | --- | --- |
 | `source` | Article URL, or path to an HTML file saved from your browser. |
-| `-o`, `--output` | Output PDF path (default: `output/<title-slug>.pdf`). |
+| `-o`, `--output` | Output PDF path (default: `output/substack/<publication>/<title-slug>.pdf`). |
 | `--cookies` | Path to a Netscape-format `cookies.txt`, for paywalled posts. |
 | `--source-url` / `--no-source-url` | Append the article's source URL to the end of the PDF (default: enabled). |
 
