@@ -36,7 +36,9 @@ from bs4 import BeautifulSoup, Tag
 from substack2pdf import (
     _ensure_native_libs,
     build_html,
+    clean_source_url,
     embed_images,
+    http_get,
     make_session,
     slugify,
     source_output_dir,
@@ -59,8 +61,7 @@ STRIP_SELECTORS = [
 def fetch_html(source: str, session: requests.Session) -> tuple[str, str]:
     """Return (html, base_url). Source may be a URL or a local file path."""
     if re.match(r"^https?://", source):
-        resp = session.get(source, timeout=30)
-        resp.raise_for_status()
+        resp = http_get(session, source)
         return resp.text, source
     path = Path(source)
     if not path.exists():
@@ -227,7 +228,7 @@ def main():
         display_url = ""
         if args.source_url:
             if re.match(r"^https?://", args.source):
-                display_url = args.source
+                display_url = clean_source_url(args.source)
             elif base_url and base_url != "https://www.theguardian.com/":
                 display_url = base_url
 
