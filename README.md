@@ -118,7 +118,8 @@ A sibling utility for [theguardian.com](https://www.theguardian.com). Guardian
 articles are free to read, so no cookies are involved:
 
 ```bash
-python guardian2pdf.py https://www.theguardian.com/news/2026/aug/18/some-article
+# a real, working example — copy-paste this one to try it
+python guardian2pdf.py https://www.theguardian.com/news/2026/aug/18/the-long-read-democracy-v-the-machine-digital-age-warnings-computer-history-technology
 ```
 
 Same output convention (`output/<title-slug>.pdf`), same `-o` and

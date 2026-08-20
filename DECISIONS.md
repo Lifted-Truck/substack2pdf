@@ -97,3 +97,27 @@ URL each file already carries (the `--source-url` feature), so placement was
 derived per file rather than assumed — which is how the Harper's cross-post
 landed in its own folder instead of being lumped in with the newsletter it was
 downloaded alongside.
+
+## 7 — Network failures exit with one line, not a stack trace (2026-08-18)
+
+**Decision.** Both converters route URL fetches through a shared `http_get()`
+that turns HTTP and network errors into a one-line `error:` message plus the
+offending URL, and exits. Distinct hints for 404, 403 (suggests `--cookies` or a
+saved page) and 429 (rate limit).
+
+**Why.** A traceback is the wrong output for "that page does not exist": it
+buries the single fact the user needs under frames from inside `requests`, and
+reads as a crash in the tool rather than a problem with the input. Observed:
+a user pasted a placeholder URL from the README and got a `requests.HTTPError`
+traceback, which is indistinguishable from a bug.
+
+**Also decided.** The README's Guardian example is now a real, working article
+URL. The previous placeholder (`.../2026/aug/18/some-article`) sat on the real
+`theguardian.com` domain, so it read as genuine and 404'd when copy-pasted —
+the direct cause of the report above. An example on a real domain must either
+work or be unmistakably fake.
+
+**Also decided.** The URL recorded in the PDF is stripped of tracking parameters
+(`utm_*`, `CMP`, `fbclid`, …) while functional ones (e.g. `page=2`) are kept, so
+an archived article carries a clean canonical reference rather than the campaign
+noise of whichever mailout it arrived in.

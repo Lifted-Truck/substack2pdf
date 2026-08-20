@@ -37,7 +37,8 @@ import tempfile
 from datetime import datetime
 from http.cookiejar import MozillaCookieJar
 from pathlib import Path
-from urllib.parse import urljoin, urlparse, parse_qs, unquote
+from urllib.parse import (urljoin, urlparse, parse_qs, parse_qsl, unquote,
+                          urlencode, urlunparse)
 
 import requests
 from bs4 import BeautifulSoup, NavigableString, Tag
@@ -92,11 +93,52 @@ def make_session(cookies_path: str | None) -> requests.Session:
     return session
 
 
+# Query parameters that track a campaign rather than identify the article.
+# Stripped from the URL recorded in the PDF so the archive keeps a clean,
+# canonical reference (a mailout link carries ?CMP=..., which is noise a year on).
+_TRACKING_PARAMS = ("cmp", "fbclid", "gclid", "mc_cid", "mc_eid", "smid", "sref")
+
+
+def clean_source_url(url: str) -> str:
+    """Drop tracking parameters from a URL for display/archival."""
+    parts = urlparse(url)
+    if not parts.query:
+        return url
+    kept = [(k, v) for k, v in parse_qsl(parts.query, keep_blank_values=True)
+            if k.lower() not in _TRACKING_PARAMS and not k.lower().startswith("utm_")]
+    return urlunparse(parts._replace(query=urlencode(kept)))
+
+
+def http_get(session: requests.Session, url: str) -> requests.Response:
+    """GET a URL, turning network/HTTP failures into a one-line exit.
+
+    A stack trace is the wrong output for "that page does not exist": it buries
+    the one fact the user needs under frames from inside requests.
+    """
+    try:
+        resp = session.get(url, timeout=30)
+        resp.raise_for_status()
+        return resp
+    except requests.HTTPError:
+        code = resp.status_code
+        hint = {
+            404: "no article at that URL (404). Check for a typo, and make sure\n"
+                 "         you pasted a real article link rather than an example one",
+            403: "access refused (403). Paywalled or region-locked posts may need\n"
+                 "         --cookies, or a page saved from your logged-in browser",
+            429: "rate-limited (429). Wait a little and retry, more slowly",
+        }.get(code, f"the server returned HTTP {code}")
+        sys.exit(f"error: {hint}\n       url: {url}")
+    except requests.Timeout:
+        sys.exit(f"error: timed out after 30s fetching\n       url: {url}")
+    except requests.RequestException as exc:
+        sys.exit(f"error: could not reach the server ({type(exc).__name__})\n       url: {url}")
+
+
 def fetch_html(source: str, session: requests.Session) -> tuple[str, str]:
     """Return (html, base_url). Source may be a URL or a local file path."""
     if re.match(r"^https?://", source):
-        resp = session.get(source, timeout=30)
-        resp.raise_for_status()
+        resp = http_get(session, source)
         return resp.text, source
     path = Path(source)
     if not path.exists():
@@ -506,7 +548,7 @@ def main():
         display_url = ""
         if args.source_url:
             if re.match(r"^https?://", args.source):
-                display_url = args.source
+                display_url = clean_source_url(args.source)
             elif base_url and base_url != "https://substack.com/":
                 display_url = base_url
 
