@@ -51,3 +51,26 @@ requirement — `.gitattributes` was committed earlier — so only the declarati
 was stale. Per the kit's Step 5 rule a repo declares a version exactly when it
 meets every requirement, so the honest move was to bump rather than leave a
 true-but-understated declaration. No behaviour changed; cites Decision 1.
+
+## 5 — A second converter reuses the renderer rather than abstracting it (2026-08-18)
+
+**Decision.** Add `guardian2pdf.py` for theguardian.com as a sibling script that
+imports substack2pdf's shared machinery (`make_session`, `embed_images`,
+`build_html`, `slugify`, `_ensure_native_libs`, `OUTPUT_DIR`) and implements only
+its own `fetch_html` / `extract_metadata` / `find_body` / `clean_body`. No
+adapter registry yet.
+
+**Why.** "Reduce, never invent": the rendering half already worked unchanged on
+Guardian markup — the existing `best_image_url` picked the Guardian's master-
+resolution images with no edits — so duplicating ~200 lines to gain a second
+publication would have bought nothing. Building the full Phase-3 adapter
+abstraction from a single new example would be inventing an interface from one
+data point. The `from substack2pdf import …` coupling is deliberate, recorded
+debt, and is what ROADMAP Phase 3 repays once a third publication shows what the
+interface actually needs.
+
+**Also decided.** Guardian chrome is detected STRUCTURALLY (a trailing block with
+no prose, whose text is mostly link text), never by class name: Guardian class
+names are hashed (`dcr-…`) and change between deploys, so a class match would
+silently rot. First attempt counted `<li>` as prose and kept the very tag list it
+meant to drop — see [[LIBRARY.md]] L0003.

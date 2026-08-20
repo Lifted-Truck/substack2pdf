@@ -32,7 +32,9 @@ fast() {
   # Project smoke: the tool must parse. Fixture-based golden tests (body-char
   # floor, no trailing divider, no false paywall warning) are Phase-0 debt in
   # ROADMAP.md; until they land, py_compile is the honest Layer-0 for this repo.
-  python3 -m py_compile substack2pdf.py || { echo "verify[fast]: substack2pdf.py failed to compile" >&2; ok=1; }
+  for mod in substack2pdf.py guardian2pdf.py; do
+    python3 -m py_compile "$mod" || { echo "verify[fast]: $mod failed to compile" >&2; ok=1; }
+  done
   return $ok
 }
 
@@ -41,7 +43,9 @@ full() {
   # ---- Layer-E: the whole gate. Run before closing a queue item. -----------
   # No golden fixtures yet (ROADMAP Phase 0). Deeper-than-py_compile smoke:
   # the module must import cleanly (catches import-time errors py_compile skips).
-  python3 -c "import substack2pdf" || { echo "verify[full]: substack2pdf import failed" >&2; return 1; }
+  # Import each converter: catches import-time errors py_compile cannot see,
+  # including guardian2pdf's reuse of substack2pdf's shared machinery.
+  python3 -c "import substack2pdf, guardian2pdf" || { echo "verify[full]: converter import failed" >&2; return 1; }
   return 0
 }
 
