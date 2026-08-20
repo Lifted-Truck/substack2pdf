@@ -18,7 +18,7 @@ Usage:
     # (export cookies.txt with a browser extension like "Get cookies.txt")
     python substack2pdf.py https://... --cookies cookies.txt
 
-    # PDFs are written to ./output/ by default; override with -o
+    # PDFs go to ./output/substack/<publication>/ by default; override with -o
     python substack2pdf.py https://... -o article.pdf
 
 Dependencies: pip install requests beautifulsoup4 lxml weasyprint
@@ -433,13 +433,42 @@ def slugify(text: str) -> str:
     return slug[:70] or "article"
 
 
+def source_output_dir(platform: str, publication: str = "") -> str:
+    """Directory for one source's PDFs: output/<platform>[/<publication>].
+
+    Sources are kept apart so a mixed archive stays navigable — 100+ posts from
+    one newsletter should not sit in the same flat folder as unrelated papers.
+    """
+    parts = [OUTPUT_DIR, slugify(platform)]
+    if publication:
+        parts.append(slugify(publication))
+    return os.path.join(*parts)
+
+
+def publication_slug(base_url: str, meta: dict) -> str:
+    """Best-effort publication identifier for the output path.
+
+    Substack publications are either `<name>.substack.com` or a custom domain,
+    so the host is the reliable signal and og:site_name is the fallback (it is
+    absent or generic often enough not to lead).
+    """
+    host = urlparse(base_url).netloc.lower().split(":")[0]
+    host = host[4:] if host.startswith("www.") else host
+    if host.endswith(".substack.com"):
+        return host[: -len(".substack.com")]
+    # A bare substack.com (the saved-HTML fallback base) names no publication.
+    if host and host != "substack.com":
+        return host.split(".")[0]
+    return slugify(meta.get("publication", "")) if meta.get("publication") else "unknown"
+
+
 # ---------------------------------------------------------------- main
 
 def main():
     ap = argparse.ArgumentParser(description="Convert a Substack article to a formatted PDF.")
     ap.add_argument("source", help="Article URL, or path to an HTML file saved from your browser")
     ap.add_argument("-o", "--output",
-                    help="Output PDF path (default: output/<title-slug>.pdf)")
+                    help="Output PDF path (default: output/substack/<publication>/<title-slug>.pdf)")
     ap.add_argument("--cookies", help="Path to a Netscape-format cookies.txt (for paywalled posts)")
     ap.add_argument("--source-url", action=argparse.BooleanOptionalAction, default=True,
                     help="Append the article's source URL to the end of the PDF (default: enabled)")
@@ -486,7 +515,9 @@ def main():
         if args.output:
             out = args.output
         else:
-            out = os.path.join(OUTPUT_DIR, f"{slugify(meta['title'])}.pdf")
+            pub = publication_slug(base_url, meta)
+            out = os.path.join(source_output_dir("substack", pub),
+                               f"{slugify(meta['title'])}.pdf")
         out_parent = os.path.dirname(out)
         if out_parent:
             os.makedirs(out_parent, exist_ok=True)
